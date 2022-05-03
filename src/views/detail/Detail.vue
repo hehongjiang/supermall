@@ -100,6 +100,14 @@
       },
       addToCart() {
         console.log('加入购物车');
+        const obj = {}
+        obj.iid = this.iid
+        obj.imgURL = this.topImages[0]
+        obj.title = this.goods.title
+        obj.desc = this.goods.desc
+        obj.price = this.goods.realPrice
+        this.$store.dispatch('addCart',obj)
+        // this.$store.commit('addCart',obj)
       },
       titleClick(index) {
         this.currentIndex = index;
