@@ -50,7 +50,7 @@
       //完成上拉刷新
       finishPullUp() {
         this.scroll && this.scroll.finishPullUp && this.scroll.finishPullUp()
-        //console.log('完成更新')
+        // console.log('完成更新')
       },
       //加载完图片刷新
       refresh() {

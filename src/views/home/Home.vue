@@ -26,11 +26,8 @@
   import HomeSwiper from './childComps/HomeSwiper'
   import RecommendView from './childComps/RecommendView'
   import FeatureView from './childComps/FeatureView'
-
   import TabControl from 'components/content/tabControl/TabControl'
-
   import GoodsList from '../../components/content/goods/GoodsList'
-
   import BackTop from 'components/content/backTop/BackTop'
 
   export default {
@@ -57,7 +54,8 @@
         currentType: 'pop',
         showBackTop: false,
         showTabControl: false,
-        tabOffsetTop: 0
+        tabOffsetTop: 0,
+        saveY: 0
       }
     },
     computed: {
@@ -72,10 +70,15 @@
       this.getProductData('pop')
       this.getProductData('new')
       this.getProductData('sell')
+    },
+    mounted() {
       //1.监听图片加载完成事件
       this.$bus.$on('imgLoad',() =>{
         this.$refs.scroll.refresh()
       })
+      //2.获取offsetTop
+      /* console.log(this.$refs.tabControl.$el)*/
+      //console.log(this.$refs.tabControl.$el.offsetTop)
     },
     methods: {
       // 请求多个数据
@@ -134,7 +137,18 @@
         // console.log(this.$refs.tabControl.$el.offsetTop)
         this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
       }
-    }
+    },
+    // 监听进入首页
+    activated() {
+      // console.log("进入首页");
+      this.$refs.scroll.scrollTo(0, this.saveY, 0)
+      this.$refs.scroll.refresh()
+    },
+    // 监听离开首页
+    deactivated() {
+      // console.log("离开首页");
+      this.saveY = this.$refs.scroll.scroll.y
+    },
   }
 </script>
 

@@ -1,13 +1,11 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <img :src="showImage"  @load="imgLoad" :key="showImage" alt="">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
       <span class="collect">{{goodsItem.cfav}}</span>
     </div>
-
-
   </div>
 
 </template>
@@ -30,6 +28,14 @@
       }
     },
     methods: {
+      // 监听图片点击
+      itemClick() {
+        // 1.获取iid
+        const iid = this.goodsItem.iid;
+        // 2.跳转到详情页面
+        this.$router.push({path: '/detail', query: {iid}})
+      },
+      // 监听图片加载
       imgLoad() {
         this.$bus.$emit('imgLoad');
       }
