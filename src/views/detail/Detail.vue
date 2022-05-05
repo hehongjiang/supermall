@@ -3,7 +3,8 @@
     <DetailNavBar :current-index="currentIndex" @titleClick="titleClick"></DetailNavBar>
     <scroll class="wrapper"
             ref="scroll"
-            :probe-type="3">
+            :probe-type="3"
+            @scroll="contentScroll">
       <DetailSwiper :images="topImages"></DetailSwiper>
       <DetailBaseInfo :goods="goods"></DetailBaseInfo>
       <DetailShopInfo :shop="shop"></DetailShopInfo>
@@ -40,7 +41,7 @@
       DetailParamInfo,
       DetailCommentInfo,
       GoodsList,
-      DetailBottomBar
+      DetailBottomBar,
     },
     data() {
       return {
@@ -88,6 +89,9 @@
       })
     },
     methods: {
+      // ...mapActions({
+      //   addCart: 'addCart'
+      // }),
       //每当图片加载器完成就获取offsetTop
       imageLoad() {
         this.$refs.scroll.refresh()
@@ -107,12 +111,46 @@
         obj.desc = this.goods.desc
         obj.price = this.goods.realPrice
         this.$store.dispatch('addCart',obj)
-        // this.$store.commit('addCart',obj)
+        // this.$store.dispatch('addCart', obj).then(() => {
+        //  this.$toast({message: '加入购物车成功'})
+        // })
+        // this.addCart(obj).then(() => {
+        //   this.$toast({message: '加入购物车成功'})
+        // })
       },
       titleClick(index) {
         this.currentIndex = index;
         // 点击滑到对应的位置
         this.$refs.scroll.scrollTo(0,-this.themeTops[index],500)
+      },
+      contentScroll(position) {
+        // 监听滚动到某个主题
+        this._listenScrollTheme(-position.y)
+      },
+      _listenScrollTheme(position) {
+        //对数组长度进行赋值
+        let length = this.themeTops.length;
+        for (let i = 0; i < length; i++) {
+          //遍历themeTops
+          let iPos = this.themeTops[i];
+          /**
+           * 判断的方案:
+           *  方案一:
+           *    条件: (i < (length-1) && currentPos >= iPos && currentPos < this.themeTops[i+1]) || (i === (length-1) && currentPos >= iPos),
+           *    优点: 不需要引入其他的内容, 通过逻辑解决
+           *    缺点: 判断条件过长, 并且不容易理解
+           *  方案二:
+           *    条件: 给themeTops最后添加一个很大的值, 用于和最后一个主题的top进行比较.
+           *    优点: 简洁明了, 便于理解
+           *    缺点: 需要引入一个较大的int数字
+           */
+          if (position >= iPos && position < this.themeTops[i+1]) {
+            if (this.currentIndex !== i) {
+              this.currentIndex = i;
+            }
+            break;
+          }
+        }
       }
     }
   }
