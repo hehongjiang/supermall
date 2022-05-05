@@ -14,6 +14,7 @@
       <goods-list ref="recommend" :goods="goodsList"></goods-list>
     </scroll>
     <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
+    <toast :message='message' :show="show"></toast>
   </div>
 </template>
 
@@ -29,6 +30,7 @@
   import DetailCommentInfo from './childComps/DetailCommentInfo'
   import GoodsList from 'components/content/goods/GoodsList'
   import DetailBottomBar from './childComps/DetailBottomBar'
+  import Toast from 'components/common/toast/Toast'
   export default {
     name: "Detail",
     components: {
@@ -42,6 +44,7 @@
       DetailCommentInfo,
       GoodsList,
       DetailBottomBar,
+      Toast
     },
     data() {
       return {
@@ -54,7 +57,9 @@
         paramInfo: {},
         commentInfo: {},
         goodsList: [],
-        themeTops: []
+        themeTops: [],
+        message: "",
+        show: false
       }
     },
     created() {
@@ -89,9 +94,6 @@
       })
     },
     methods: {
-      // ...mapActions({
-      //   addCart: 'addCart'
-      // }),
       //每当图片加载器完成就获取offsetTop
       imageLoad() {
         this.$refs.scroll.refresh()
@@ -103,20 +105,17 @@
         this.themeTops.push(this.$refs.recommend.$el.offsetTop)
       },
       addToCart() {
-        console.log('加入购物车');
+        // console.log('加入购物车');
         const obj = {}
         obj.iid = this.iid
         obj.imgURL = this.topImages[0]
         obj.title = this.goods.title
         obj.desc = this.goods.desc
         obj.price = this.goods.realPrice
-        this.$store.dispatch('addCart',obj)
-        // this.$store.dispatch('addCart', obj).then(() => {
-        //  this.$toast({message: '加入购物车成功'})
-        // })
-        // this.addCart(obj).then(() => {
-        //   this.$toast({message: '加入购物车成功'})
-        // })
+        this.$store.dispatch("addCart",obj).then((res) => {
+          // this.$toast({message: '加入购物车成功'})
+          this.$toast.show(res,1500)
+        })
       },
       titleClick(index) {
         this.currentIndex = index;
